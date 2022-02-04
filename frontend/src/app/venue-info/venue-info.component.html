@@ -1,0 +1,12 @@
+<h2>Venues List</h2>
+<ul class="heroes">
+    <li *ngFor="let venue of venues" >
+        <!-- <div>
+            <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
+            <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
+        </div> -->
+        <a routerLink="/venues/{{ venue.venue_id }}">
+            <span class="badge">{{ venue.venue_name }} </span>
+        </a>
+    </li>
+</ul>

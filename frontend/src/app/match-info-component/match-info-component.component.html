@@ -1,0 +1,16 @@
+<p>match-info-component works!</p>
+<h2>Match List</h2>
+<ul class="heroes">
+    <li *ngFor="let match of matches">
+        <a routerLink="/matches/{{ match.match_id }}">
+            <div>
+
+                <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
+
+                <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
+
+            </div>
+        </a>
+        <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
+    </li>
+</ul>
