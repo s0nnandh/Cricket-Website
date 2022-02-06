@@ -1,24 +1,44 @@
 import { Injectable } from '@angular/core';
 import { Match } from '../match';
 import { Observable, of } from 'rxjs';
+import { WebRequestService } from './web-request.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchesService {
 
-  match : Match = {
-    match_id : 1,
-    Team1 : 'A',
-    Team2 : 'B'
-  };
+  x : number = 0;
 
-  matches : Match[] = [];
+  
 
-  constructor() { }
+  z : Map<string,string>[] = [];
 
-  getMatches() : Observable<Match[]> {
-   this.matches.push(this.match);
-   return of(this.matches);
+  constructor(private webReqService : WebRequestService) { }
+
+  getMatches(a : number,b : number) : Observable<Match[]> {
+  //  this.webReqService.get(`matches/${a}/${b}`).subscribe(
+  //   y => {
+  //     this.z = y;
+  //     ++this.x;
+  //   }
+  //  );
+  // //  this.z[0].forEach(y => {
+  // //   this.matches.push(new Match(y));
+  // //   this.x++;
+  // //  });
+  // console.log(this.z.values());
+  // console.log('Z[0',this.z[0]);
+  //  console.log('MATCH',this.z);
+  //  console.log('X',this.x);
+  //  return of(this.matches);
+    var matches : Match[] = [];
+    this.webReqService.get(`matches/${a}/${b}`).subscribe(      
+      (y : any) => y.forEach((z : any) =>  {
+        matches.push(new Match(z['match_id'],z['team1'],z['team1'],z['team1'],z['team1'],z['team1']));
+      }
+    ));
+    console.log(matches);
+    return of(matches);
   }
 }

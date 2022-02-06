@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Match } from '../match';
 import { MatchesService } from '../Services/matches.service';
 
@@ -9,20 +9,54 @@ import { MatchesService } from '../Services/matches.service';
 })
 export class MatchInfoComponentComponent implements OnInit {
 
-  cnt : number = 0
+  @Input() cnt : number = 0
+
+  @Input() stop : number = 1
 
   matches : Match[] = [];
 
   constructor(private matchService : MatchesService) { }
 
   ngOnInit(): void {
-    this.getMatches();
+    this.getMatches(1,10).then(res => this.f2());
   }
 
-  getMatches(){
-    this.matchService.getMatches().subscribe(
-      x => this.matches = x
-    );
+  getMatches(a : number,b : number){
+    return new Promise<void>((resolve) => {
+        this.matches = [];
+        this.matchService.getMatches(a,b).subscribe(
+        x => {
+          this.matches = x;
+        }
+      );
+      resolve();
+    });
+    
   }
+
+  f2(){
+    console.log(this.matches.length);
+    if(this.matches.length < 10){
+      this.stop = 0;
+    }
+    else this.stop = 1;
+  }
+
+  onNext(){
+    this.cnt++;
+    var x = 10 * this.cnt + 1;
+    this.getMatches(x,x + 9);
+  }
+
+  
+
+  goBack(){
+    this.cnt--;
+    if(this.cnt < 0)this.cnt = 0;
+    var x = 10 * this.cnt + 1;
+    this.getMatches(x,x + 9);
+  } 
+
 
 }
+

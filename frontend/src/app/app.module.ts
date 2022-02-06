@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { NgChartsModule } from 'ng2-charts';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MatchInfoComponentComponent } from './match-info-component/match-info-component.component';
@@ -24,7 +26,8 @@ import { PointsTableComponent } from './points-table/points-table.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NgChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

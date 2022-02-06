@@ -4,13 +4,15 @@
     <li *ngFor="let match of matches">
         <a routerLink="/matches/{{ match.match_id }}">
             <div>
-
-                <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
-
-                <p>{{ match.Team1 }} vs {{ match.Team2 }}</p>
+                <!-- <p>{{ match. }}</p> -->
+                <p>{{ match.team1 }} vs {{ match.team2 }}</p> 
+                <p>{{ match.team1 }} vs {{ match.team2 }}</p>
 
             </div>
         </a>
         <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
     </li>
 </ul>
+
+<button (click)="goBack()">Go Back</button>
+<button (click)="onNext()">Next</button>

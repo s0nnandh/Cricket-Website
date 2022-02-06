@@ -1,7 +1,43 @@
 <p>player-detail works!</p>
 <p>Player Statistics</p>
+<div>
 <ul class="heroes">
-    <li *ngFor="let val of getValues()">        
-        <span class="badge">{{ val }}</span>
+    <p>{{ mp.get('player') }}</p>
+    <p>{{ mp.get('country') }}</p>
+    <p>{{ mp.get('bat') }}</p>
+    <p>{{ mp.get('bowl') }}</p>
+</ul>
+<ul>
+    <li *ngFor="let val of getBatValues()">
+        {{ val[0] }}  {{ val[1] }}
     </li>
 </ul>
+</div>
+
+<div>
+    <div style="display: block">
+      <canvas baseChart
+        [datasets]="barChartData.datasets"
+        [labels]="Ids"
+        [options]="barChartOptions"
+        [type]="barChartType">
+      </canvas>
+    </div>
+    <!-- <button mat-button mat-raised-button color="primary" (click)="randomize()">Update</button> -->
+  </div>
+
+  <div class="flex">
+    <div class="flex-item">
+      <div style="display: block;">
+      <canvas baseChart width="400" height="400"
+                  [datasets]="lineChartData.datasets"
+                  [labels]="ball_Ids"
+                  [options]="lineChartOptions"
+                  [type]="lineChartType"
+                ></canvas>
+      </div>
+    </div>
+  </div>
+<!-- <div id="divChart">
+<canvas id="ctx"></canvas>
+</div> -->
