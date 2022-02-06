@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Venue } from '../venue';
 import { Observable, of } from 'rxjs';
+import { WebRequestService } from './web-request.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +15,9 @@ export class VenuesService {
 
   venues : Venue[] = [];
 
-  constructor() { }
+  constructor(private webReqService : WebRequestService) { }
 
-  getVenues() : Observable<Venue[]>{
-    this.venues.push(this.venue);
-    return of(this.venues);
+  getVenues(){
+    return this.webReqService.get(`venue`);
   }
 }

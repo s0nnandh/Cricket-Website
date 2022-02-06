@@ -26,6 +26,13 @@
     <!-- <button mat-button mat-raised-button color="primary" (click)="randomize()">Update</button> -->
   </div>
 
+  <div>
+      <canvas baseChart
+      chartType="bar"
+      [datasets]="chart.datasets"
+      [labels]="ball_Ids"
+      [options]="opt"></canvas>
+  </div>
   <div class="flex">
     <div class="flex-item">
       <div style="display: block;">

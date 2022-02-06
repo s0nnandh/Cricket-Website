@@ -5,3 +5,28 @@
         <span class="badge">{{ val }}</span>
     </li>
 </ul>
+
+<div>
+    <div>
+      <div style="display: block">
+        <canvas baseChart
+          [data]="doughnutChartData"
+  
+          [type]="doughnutChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+<div class="flex">
+    <div class="flex-item">
+      <div style="display: block;">
+      <canvas baseChart width="400" height="400"
+                  [datasets]="lineChartData.datasets"
+                  [labels]="Ids"
+                  [options]="lineChartOptions"
+                  [type]="lineChartType"
+                ></canvas>
+      </div>
+    </div>
+  </div>

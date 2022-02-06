@@ -30,6 +30,54 @@ export class PlayerDetailComponent implements OnInit {
   ball_runs : Array<number> = [];
   ball_w : Array<number> = [];
 
+  public opt =  {
+    "options": {
+      "legend": {
+        "text": "You awesome chart with average line",
+        "display": true,
+      },
+      "scales": {
+        "yAxes": [{
+          "ticks": {
+          "beginAtZero": true
+          }
+        }],
+        "xAxes": [{
+          "ticks": {
+          "min": "Monday",
+          "max": "Sunday",
+          }
+        }],
+      }
+    }
+  };
+
+  public chart : ChartData<'bar' | 'line'> = {
+    "datasets" : [
+      { data : [],"label" : 'A',type : 'line'},
+      { data : [],"label" : 'B'}
+    ],
+    // "options": {
+    //   "legend": {
+    //     "text": "You awesome chart with average line",
+    //     "display": true,
+    //   },
+    //   "scales": {
+    //     "yAxes": [{
+    //       "ticks": {
+    //       "beginAtZero": true
+    //       }
+    //     }],
+    //     "xAxes": [{
+    //       "ticks": {
+    //       "min": "Monday",
+    //       "max": "Sunday",
+    //       }
+    //     }],
+    //   }
+    // }
+  };
+
   public barChartOptions : ChartConfiguration['options'] = {
     responsive : true
   };
@@ -47,7 +95,8 @@ export class PlayerDetailComponent implements OnInit {
   public lineChartData : ChartData<'line',number[]> = {
     labels : [],
     datasets : [
-      { data : [],label : 'B'}
+      { data : [],label : 'B'},
+      { data : [],label : 'C',type : 'line'}
     ]
   };
 
@@ -126,9 +175,9 @@ export class PlayerDetailComponent implements OnInit {
       x => {
         x.forEach((y : any) => {
           this.ball_Ids.push(y['match_id']);
-          this.ball_runs.push(Number(y['runs']));
+          this.chart.datasets[1].data.push(Number(y['runs']));
           var k = Number(y['wickets']);
-          this.lineChartData.datasets[0].data.push(k);
+          this.chart.datasets[0].data.push(k);
         })
       }
     )

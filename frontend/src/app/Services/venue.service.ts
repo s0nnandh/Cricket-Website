@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable, of, retry } from 'rxjs';
 import { WebRequestService } from './web-request.service';
 
 @Injectable({
@@ -9,16 +9,16 @@ export class VenueService {
 
   constructor(private webReqService : WebRequestService) { }
 
-  getVenue(id : number) : Observable<Map<string,string>>{
-    let mp = new Map<string,string>();
-    mp.set('VenueName','a');
-    mp.set('Address','a');
-    mp.set('Capacity','a');
-    mp.set('Total','a');
-    mp.set('High','a');
-    mp.set('Low','a');
-    mp.set('Chase','b')
-    return of(mp);
+  getVenue(id : number) {
+    return this.webReqService.get(`venue_details/${id}`);
+  }
+
+  getGraph(id : number){
+    return this.webReqService.get(`venue_graph/${id}`);
+  }
+
+  getPie(id : number){
+    return this.webReqService.get(`venue_pie/${id}`);
   }
 
 }

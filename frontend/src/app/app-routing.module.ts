@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MatchDetailComponent } from './match-detail/match-detail.component';
 import { MatchInfoComponentComponent } from './match-info-component/match-info-component.component';
 import { PlayerDetailComponent } from './player-detail/player-detail.component';
+import { PointsTableComponent } from './points-table/points-table.component';
 import { VenueDetailComponent } from './venue-detail/venue-detail.component';
 import { VenueInfoComponent } from './venue-info/venue-info.component';
 
@@ -11,7 +12,8 @@ const routes: Routes = [
   { path : 'venues', component : VenueInfoComponent },
   { path : 'venues/:id',component : VenueDetailComponent },
   { path : 'players/:id',component : PlayerDetailComponent },
-  { path : 'matches/:id',component : MatchDetailComponent }
+  { path : 'matches/:id',component : MatchDetailComponent },
+  { path : 'pointstable/:id',component : PointsTableComponent}
 ];
 
 @NgModule({

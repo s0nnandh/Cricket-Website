@@ -196,6 +196,127 @@ app.get('/bowler_info2/:id1',async (req ,res) =>{
     }
 }); 
 
+app.get('/pointstable/:id1',async (req ,res) =>{
+    try {
+
+        const id1 = req.params.id1;
+
+        const allt1 = await pool.query(`
+            with Point(nmatch, wins , lose , tie , team_id , season_year , team_name , points) as 
+            (
+                SELECT *,wins*2+tie*1 as points FROM 
+            (
+                SELECT SUM(CASE WHEN match.team1=team.team_id or match.team2=team.team_id THEN 1 ELSE 0 END) as nmatch,
+                SUM(CASE WHEN match.match_winner=team.team_id and (match.win_type!='tie' or match.win_type!='nr') THEN 1 ELSE 0 END) as wins,
+                SUM(CASE WHEN match.team1+match.team2-match.match_winner=team.team_id and (match.win_type!='tie' or match.win_type!='nr') THEN 1 ELSE 0 END) as lose,
+                SUM(CASE WHEN (match.team1=team.team_id or match.team2=team.team_id) and (match.win_type='tie' or match.win_type='nr') THEN 1 ELSE 0 END) as tie,
+                team_id,season_year,team_name
+                FROM match 
+                NATURAL JOIN team 
+                GROUP BY season_year,team_id
+            ) as temp
+            WHERE nmatch>0
+            ORDER BY season_year,points DESC),
+            
+            newt(match_id , innings_no, runs, overs , team_id) as (
+                select match_id,innings_no, sum(runs) as runs, sum(overs) as overs, team_id from (select match_id , innings_no, team_id , sum(runs_scored + extra_runs) as runs ,max(over_id)as overs from  (select player_match.match_id , team_id ,innings_no, runs_scored , extra_runs , out_type ,over_id from ball_by_ball , player_match  where player_match.match_id = ball_by_ball.match_id and striker = player_id) as v group by match_id , innings_no,team_id order by match_id , innings_no ) as z group by team_id , match_id ,innings_no
+                order by match_id, innings_no
+            ),
+            nr(season_year, team_id , nrr) as 
+            (select season_year,team_id,SUM(t1r/t1o - t2r/t2o) as nrr 
+            from (select t1.match_id,t1.runs as t1r,t1.overs as t1o,t2.runs as t2r,t2.overs as t2o,t1.team_id from newt as t1 , newt as t2 where t1.match_id = t2.match_id and t1.innings_no != t2.innings_no) as x
+            join match on match.match_id= x.match_id 
+            group by season_year,team_id
+            order by season_year,nrr DESC
+            )
+            select nmatch , wins , lose , tie , p.season_year , p.team_id , p.team_name , nrr , points from Point as p,(select team_name , nr.team_id , season_year , nrr from nr,team where team.team_id = nr.team_id order by season_year , nrr desc) as mm where mm.season_year = p.season_year and mm.team_id = p.team_id and p.season_year = $1 order by points desc , nrr desc
+            `,[id1])
+        res.json(allt1.rows);
+
+        
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/venue',async (req ,res) =>{
+    try {
+        const allt1 = await pool.query("select venue_id,venue_name from venue")
+        res.json(allt1.rows);
+
+        
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+app.get('/venue/:id1',async (req ,res) =>{
+    try {
+        const id1 = req.params.id1;
+        const allt1 = await pool.query("select * from venue where venue_id = $1",[id1])
+        res.json(allt1.rows);
+
+        
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+app.get('/venue_details/:id1',async (req ,res) =>{
+    try {
+        const id1 = req.params.id1;
+        const allt1 = await pool.query(`with venues(venue_id , matches) as (
+	select venue_id , count(*) as matches from match group by venue_id order by venue_id
+	),
+    max_min(max , min , venue_id ) as (
+    select max(runs), min(runs) , venue_id  from (select match_id , innings_no , runs ,m1.venue_id , matches from (select match_id , innings_no , sum(extra_runs+runs_scored) as runs , venue_id  from (select runs_scored , extra_runs , m.match_id , m.venue_id, b.innings_no from ball_by_ball as b, match as m where m.match_id = b.match_id order by m.match_id) as z group by match_id , innings_no , venue_id order by match_id) as m1 , venues where venues.venue_id = m1.venue_id) as m2 group by  venue_id  order by venue_id
+    ),
+    final0(venue_id , venue_name , city_name , country_name , capacity , max , min , matches ) as (
+    select  venue.venue_id , venue.venue_name , city_name , country_name , capacity , max , min , matches from max_min , venue , venues where max_min.venue_id = venue.venue_id and venues.venue_id = venue.venue_id
+    ),
+    chase(max_chase , venue_id) as (
+    select max(runs) as max,  venue_id  from (select match_id , innings_no , runs ,m1.venue_id , matches from (select match_id , innings_no , sum(extra_runs+runs_scored) as runs , venue_id  from (select runs_scored , extra_runs , m.match_id , m.venue_id, b.innings_no from ball_by_ball as b, match as m where m.match_id = b.match_id order by m.match_id) as z group by match_id , innings_no , venue_id order by match_id) as m1 , venues where venues.venue_id = m1.venue_id) as m2 where innings_no = 2 group by  venue_id  order by venue_id
+    )
+    select * from final0 , chase where chase.venue_id = final0.venue_id and chase.venue_id = $1`,[id1])
+res.json(allt1.rows);
+
+
+} catch (error) {
+console.error(error.message);
+}
+});
+
+app.get('/venue_pie/:id1',async (req ,res) =>{
+    try {
+        const id1 = req.params.id1;
+        const allt1 = await pool.query(`with mat(match_id , innings_no , total  ) as (
+	select p.match_id , innings_no , total , venue_id from (select match_id , innings_no , sum(runs_scored + extra_runs) as total  from ball_by_ball group by match_id , innings_no  order by match_id) as p , match where p.match_id = match.match_id 
+	),
+	mat1(match_id , innings_no , total1 , venue_id ) as (
+	select *  from  mat where   innings_no =1),
+	mat2(match_id , innings_no , total2 , venue_id ) as (
+		select * from mat where innings_no = 2)
+	select count(case when total1>total2 then 1 end) as first_batting , count(case when total1<total2 then 1 end) as second_batting , count(*) as total ,venue_id  from (select m1.match_id , m1.innings_no , m2.innings_no , total1 , total2 , m1.venue_id from mat1 as m1 , mat2 as m2 where m1.match_id = m2.match_id) as z where venue_id = $1 group by venue_id`,[id1])
+res.json(allt1.rows);
+
+
+} catch (error) {
+console.error(error.message);
+}
+});
+
+
+app.get('/venue_graph/:id1',async (req ,res) =>{
+    try {
+        const id1 = req.params.id1;
+        const allt1 = await pool.query("select venue_id,season_year , avg(total) from (select p.match_id ,season_year, innings_no , total , venue_id from (select match_id , innings_no , sum(runs_scored + extra_runs) as total  from ball_by_ball group by match_id , innings_no  order by match_id) as p , match where p.match_id = match.match_id and innings_no = 1 ) as mm where venue_id = $1 group by season_year,venue_id",[id1])
+        res.json(allt1.rows);
+        
+        
+        } catch (error) {
+        console.error(error.message);
+        }
+        });
+
 app.listen(3000,(req,res) => {
     console.log("SERver is Running");
 });

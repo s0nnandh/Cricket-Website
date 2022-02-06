@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable, of } from 'rxjs';
+import { Venue } from '../venue';
 
 @Injectable({
   providedIn: 'root'
@@ -25,4 +26,10 @@ export class WebRequestService {
     // return of(this.mp);
     return this.http.get<Map<string,string>[]>(`${this.URL}/${uri}`);
   }
+
+  // getVenues(uri : string) : Observable<Venue[{
+  //   this.http.get<Venue[]>(`${this.URL}/${uri}`).pipe(
+  //     map(x : Venue[]) => 
+  //   )
+  // }
 }
