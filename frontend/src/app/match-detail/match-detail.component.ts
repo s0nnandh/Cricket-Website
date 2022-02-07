@@ -5,6 +5,7 @@ import { MatchesService } from '../Services/matches.service';
 import { MatchService } from '../Services/match.service';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { Chart,registerables } from 'chart.js';
+import { Observable } from 'rxjs';
 // import DatalabelsPlugin from 'chartjs-plugin-datalabels';
 
 @Component({
@@ -14,9 +15,9 @@ import { Chart,registerables } from 'chart.js';
 })
 export class MatchDetailComponent implements OnInit {
 
-  mp : Map<string,string>[] = [];
+  mp : Array<Map<string,string>>[] = [];
 
-  b : Map<string,string>[]  = [];
+  b : Array<Map<string,string>>[]  = [];
 
   g : Array<number>[] = [];
 
@@ -27,6 +28,13 @@ export class MatchDetailComponent implements OnInit {
   bowlSum : Array<Map<string,string>>[] = [];
 
   id : number = 0;
+
+
+  extra : Array<number>= [];
+
+  totals : Array<number> = [];
+
+  wickets : Array<number> = [];
 
   public pieChartType: ChartType = 'pie';
 
@@ -40,7 +48,7 @@ export class MatchDetailComponent implements OnInit {
 
   public lineChartOptions : ChartConfiguration['options'];
 
-  public lineChartData? : ChartConfiguration['data'];
+  public lineChartData? : ChartData<'line' | 'bubble'>;
 
   
 
@@ -63,13 +71,29 @@ export class MatchDetailComponent implements OnInit {
     this.pie = [];
     this.batSum = [];
     this.bowlSum = [];
+    this.totals = [];
+    this.wickets = [];
+    this.extra = [];
     this.getPie();
     for(let i = 0;i < 2;++i){
       this.getBatInn(i + 1);
       this.getBowlInn(i + 1);
       this.getGraphInn(i + 1);
+      this.getExtra(i + 1);
     }
     this.construct();
+  }
+
+  getExtra(inn : number){
+    this.matchService.getExtra(this.id,inn).subscribe(
+      (x)=> {
+        x.forEach((y : any) => {
+          this.extra.push(Number(y['extra_runs']));
+          this.wickets.push(Number(y['wickets']));
+          this.totals.push(Number(y['total']));
+        })
+      }
+    )
   }
 
   construct(){
@@ -113,7 +137,26 @@ export class MatchDetailComponent implements OnInit {
           pointBorderColor: '#fff',
           pointHoverBackgroundColor: '#fff',
           pointHoverBorderColor: 'rgba(77,83,96,1)',
+        },
+        {
+          data : [],
+          label : 'Wickets 1',
+          backgroundColor : 'rgba(77,83,96,0.2)',
+          borderColor: 'rgba(148,159,177,1)',
+          hoverBackgroundColor: '#fff',
+          hoverBorderColor: 'rgba(148,159,177,0.8)',
+          type : 'bubble'
+        },
+        {
+          data : [],
+          label : 'Wickets 2',
+          backgroundColor : 'rgba(148,159,177,0.2)',
+          borderColor: 'rgba(148,159,177,1)',
+          hoverBackgroundColor: '#fff',
+          hoverBorderColor: 'rgba(148,159,177,0.8)',
+          type : 'bubble'
         }
+        
       ]
     }
     this.pieChartData = {
@@ -131,6 +174,7 @@ export class MatchDetailComponent implements OnInit {
     console.log('ID',inn);
     this.matchService.getMatch(this.id,inn).subscribe(
       (x : any) => {
+        var K : Array<Map<string,string>> = [];
         x.forEach((y : any) =>  {
           var z = new Map<string,string>();
           z.set('striker',y['striker']);
@@ -139,9 +183,10 @@ export class MatchDetailComponent implements OnInit {
           z.set('fours',y['fours']);
           z.set('sixes',y['sixes']);
           z.set('balls_faced',y['balls_faced']);
-          this.mp.push(z);
+          K.push(z);
           // this.mp.push(new Map<string,string>(y));
         });
+        this.mp.push(K);
       }
     );
     this.matchService.getBatSum(this.id,inn).subscribe(
@@ -164,6 +209,7 @@ export class MatchDetailComponent implements OnInit {
   getBowlInn(inn : number){
     this.matchService.getBowl(this.id,inn).subscribe(
       (x : any) => {
+        var K : Array<Map<string,string>> = [];
         x.forEach((y : any) =>  {
           var z = new Map<string,string>();
           z.set('bowler',y['bowler']);
@@ -171,9 +217,10 @@ export class MatchDetailComponent implements OnInit {
           z.set('runs_given',y['runs_given']);
           z.set('wickets',y['wickets']);
           z.set('balls_bowled',y['balls_bowled']);
-          this.b.push(z);
+          K.push(z);
           // this.mp.push(new Map<string,string>(y));
         });
+        this.b.push(K);
       }
     );
     this.matchService.getBallSum(this.id,inn).subscribe(
@@ -202,15 +249,27 @@ export class MatchDetailComponent implements OnInit {
         var val = 0;
         this.lineChartData?.datasets[inn - 1].data.push(0);
         var prev_over = 1;
+        var w = 0;
         x.forEach((y : any) => {
           // console.log(y);
           if(y['out_type'] == null){
-            val += Number(y['runs_scored'])  + Number(y['runs_scored']);
+            val += Number(y['runs_scored']) + Number(y['extra_runs']);
             // console.log(Number(y['runs_scored']));
           }
-          if(prev_over != y['over_id']){
-            prev_over = y['over_id'];
+          else{
+            w++;
+          }
+          if(prev_over != y['over_id']){            
             this.lineChartData?.datasets[inn - 1].data.push(val);
+            for(let i = 0;i < w;++i){
+              this.lineChartData?.datasets[inn + 1].data.push({
+                x : prev_over,
+                y : val,
+                r : 5
+              })
+            }
+            w = 0;
+            prev_over = y['over_id'];
           }
         });
         this.lineChartData?.datasets[inn - 1].data.push(val);

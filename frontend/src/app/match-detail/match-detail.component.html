@@ -1,22 +1,59 @@
 <p>match-detail works!</p>
-<ul class="heroes">
-    <li *ngFor="let match of mp">
+<h2>ScoreCard</h2>
+<ul class="heroes" style="display: inline-block">
+    Innings 1 :
+    <p style="display : inline">Batter</p>  <p>Runs</p>  <p>Fours</p> <p>Sixes</p> <p>Balls faced</p>
+    <li *ngFor="let match of mp[0]">
+            <div style="display: inline-block;">
+                <a routerLink="/players/{{ match.get('striker') }}"><p>{{ match.get('player_name') }}</p></a> <p>{{ match.get('fours') }}</p> <p>{{ match.get('sixes') }}</p> <p>{{ match.get('balls_faced') }}</p>               <!-- <p>{{ match. }}</p> -->
+
+            </div>
+        <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
+    </li>
+    <p>Bowler</p>   <p>Balls Bowled</p>   <p>runs_given</p>  <p>Wickets</p>
+    <li *ngFor="let match of b[0]">
+        <div>
+            <a routerLink="/players/{{ match.get('bowler') }}"><p>{{ match.get('player_name') }}</p></a>  <p>{{ match.get('balls_bowled') }}</p>  <p>{{ match.get('runs_given') }}</p>  <p>{{ match.get('wickets') }}</p>
+            <!-- <p>{{ match. }}</p> -->
+
+        </div>
+    <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
+    </li>
+
+    Extras : {{ extra[0] }}
+
+    Score  : {{ totals[0] }} - {{ wickets[0] }}
+
+    Innings : 2
+
+
+
+    <p>Batter</p>  <p>Runs</p>  <p>Fours</p> <p>Sixes</p> <p>Balls faced</p>
+    <li *ngFor="let match of mp[1]">
             <div>
-                <a routerLink="/players/{{ match.get('striker') }}"><p>{{ match.get('player_name') }}</p></a>
+                <a routerLink="/players/{{ match.get('striker') }}"><p>{{ match.get('player_name') }}</p></a> <p>{{ match.get('fours') }}</p> <p>{{ match.get('sixes') }}</p> <p>{{ match.get('balls_faced') }}</p>
                 <!-- <p>{{ match. }}</p> -->
 
             </div>
         <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
     </li>
-    <li *ngFor="let match of b">
+    <p>Bowler</p>   <p>Balls Bowled</p>   <p>runs_given</p>  <p>Wickets</p>
+    <li *ngFor="let match of b[0]">
         <div>
-            <a routerLink="/players/{{ match.get('bowler') }}"><p>{{ match.get('player_name') }}</p></a>
+            <a routerLink="/players/{{ match.get('bowler') }}"><p>{{ match.get('player_name') }}</p></a>  <p>{{ match.get('balls_bowled') }}</p>  <p>{{ match.get('runs_given') }}</p>  <p>{{ match.get('wickets') }}</p>
             <!-- <p>{{ match. }}</p> -->
 
         </div>
     <!-- <span class="badge">{{ match.Team1 }} vs {{ match.Team2 }}</span> -->
-</li>
+    </li>
+
+    Extras : {{ extra[1] }}
+
+    Score  : {{ totals[1] }} - {{ wickets[1] }}
+
+
 </ul>
+<h2>Score Comparison</h2>
 <div class="flex">
     <div class="flex-item">
       <div style="display: block;">
@@ -28,6 +65,42 @@
       </div>
     </div>
 <div>
+
+<h2>Match Summary</h2>
+
+<!-- {{ id }} IPL : {{ }} Ikkada match_id inka IPL Season year ravali-->  
+First Innings
+<ul>
+    <li *ngFor="let x of batSum[0]">
+        <div>
+            <a routerLink="/players/x.get('id')">{{ x.get('name') }}</a> {{ x.get('runs') }} {{ x.get('balls') }}
+        </div>
+    </li>
+    <li *ngFor="let x of bowlSum[0]">
+        <div>
+            <a routerLink="/players/x.get('id')">{{ x.get('name') }}</a> {{ x.get('runs') }} {{ x.get('wickets') }} - {{ x.get('balls') }}
+        </div>
+    </li>
+</ul>
+
+Second Innings
+
+<ul>
+    <li *ngFor="let x of batSum[1]">
+        <div>
+            <a routerLink="/players/x.get('id')">{{ x.get('name') }}</a> {{ x.get('runs') }} {{ x.get('balls') }}
+        </div>
+    </li>
+    <li *ngFor="let x of bowlSum[1]">
+        <div>
+            <a routerLink="/players/x.get('id')">{{ x.get('name') }}</a> {{ x.get('runs') }} {{ x.get('wickets') }} - {{ x.get('balls') }}
+        </div>
+    </li>
+</ul>
+
+
+<div>
+
 <div>
     <div class="chart-js container" >
         <canvas baseChart
@@ -39,4 +112,4 @@
         </canvas>
       </div>
     </div>
-  </div>
+</div>

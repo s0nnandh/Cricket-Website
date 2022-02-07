@@ -38,4 +38,8 @@ export class MatchService {
     return this.webReqService.get(`match_summary/bowler/${id}/${inn}`);
   }
 
+  getExtra(id : number,inn : number){
+    return this.webReqService.get(`match_id/extra_runs/${id}/${inn}`);
+  }
+
 }

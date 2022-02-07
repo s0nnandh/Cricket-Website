@@ -60,7 +60,7 @@ app.get('/match_id/extra_runs/:id3/:id4',async (req ,res) =>{
         const id2 = req.params.id4;
         const allt1 = await pool.query("select sum(extra_runs) as extra_runs, sum(runs_scored+extra_runs) as total,count(case when out_type is not NULL then 1 end)  as wickets from ball_by_ball where match_id = $1 and innings_no = $2;",[id1,id2]);
 
-        res.json(allt1);
+        res.json(allt1.rows);
 
         
     } catch (error) {
