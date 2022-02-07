@@ -27,6 +27,10 @@ export class WebRequestService {
     return this.http.get<Map<string,string>[]>(`${this.URL}/${uri}`);
   }
 
+  post(uri : string,data : any){
+    return this.http.post(`${this.URL}/${uri}`,data);
+  }
+
   // getVenues(uri : string) : Observable<Venue[{
   //   this.http.get<Venue[]>(`${this.URL}/${uri}`).pipe(
   //     map(x : Venue[]) => 

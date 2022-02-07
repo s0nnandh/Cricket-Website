@@ -1,0 +1,28 @@
+<p>venue-form works!</p>
+
+<div class="container">
+    <h2>Venue Form</h2>
+    <form #venueForm="ngForm" (ngSubmit)="onSubmit(venueForm.value)">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" class="form-control" name="name" [(ngModel)]="Name">
+        </div>
+
+        <div class="form-group">
+            <label>Country</label>
+            <input type="text" class="form-control" name="country" [(ngModel)]="Country">
+        </div>
+
+        <div class="form-group">
+            <label>City</label>
+            <input type="text" class="form-control" name="city" [(ngModel)]="City">
+        </div>
+
+        <div class="form-group">
+            <label>Capacity</label>
+            <input type="number" class="form-control" name="cap" [(ngModel)]="Capacity">
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>

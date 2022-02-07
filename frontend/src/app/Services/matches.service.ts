@@ -35,7 +35,7 @@ export class MatchesService {
     var matches : Match[] = [];
     this.webReqService.get(`matches/${a}/${b}`).subscribe(      
       (y : any) => y.forEach((z : any) =>  {
-        matches.push(new Match(z['match_id'],z['team1'],z['team1'],z['team1'],z['team1'],z['team1']));
+        matches.push(new Match(z['match_id'],z['team1'],z['team2'],z['venue_name'],z['city_name'],z['winner']));
       }
     ));
     console.log(matches);
